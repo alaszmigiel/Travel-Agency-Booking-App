@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Koszyk{% endblock %}
+
+{% block content %}
+
+<style>
+  :root{
+    --bg: #EEE9E0;
+    --primary: #003E56;
+    --panel: #F5F5F5;
+    --text: #111;
+    --muted: #6b6b6b;
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --border: rgba(0,0,0,.10);
+    --radius: 22px;
+  }
+
+  .cart-shell{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 26px 16px 40px 16px;
+  }
+
+  .cart-title{
+    font-size: 34px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    color: var(--text);
+  }
+
+  .cart-grid{
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 18px;
+    align-items: start;
+  }
+
+  @media (max-width: 992px){
+    .cart-grid{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .items-panel{ padding: 14px; }
+  .summary-panel{ padding: 16px; position: sticky; top: 96px; }
+  @media (max-width: 992px){
+    .summary-panel{ position: static; }
+  }
+
+  .item{
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0,0,0,.07);
+  }
+
+  .item + .item{ margin-top: 12px; }
+
+  .item-row{
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  @media (max-width: 768px){
+    .item-row{ grid-template-columns: 120px 1fr; }
+    .item-actions{ grid-column: 1 / -1; padding: 0 14px 14px 14px; }
+  }
+
+  .thumb{
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    display: block;
+    background: #eee;
+  }
+
+  .item-body{
+    padding: 14px 0 14px 0;
+  }
+
+  .item-title{
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .item-region{
+    color: var(--muted);
+    margin-top: 4px;
+    font-size: 14px;
+  }
+
+  .item-metrics{
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    color: #222;
+    font-size: 14px;
+  }
+
+  .metric{
+    background: rgba(0,0,0,.04);
+    border: 1px solid rgba(0,0,0,.06);
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+
+  .item-actions{
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .price{
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .muted{ color: var(--muted); }
+
+  .summary-title{
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 10px 0;
+    color: var(--text);
+  }
+
+  .summary-line{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    color: #222;
+  }
+
+  .summary-line:last-of-type{
+    border-bottom: none;
+  }
+
+  .summary-total{
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+
+  .summary-actions{
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .btn-primary-cart{
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: #fff;
+    border-radius: 16px;
+    padding: 12px 16px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .btn-primary-cart:hover{
+    filter: brightness(.95);
+    color: #fff;
+  }
+
+  .empty-card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+</style>
+
+<div class="cart-shell">
+  <h1 class="cart-title">Twój koszyk</h1>
+
+  {% if items %}
+    <div class="cart-grid">
+
+      <div class="panel items-panel">
+        {% for item in items %}
+          <div class="item">
+            <div class="item-row">
+
+              <div>
+                {% if item.offer.image %}
+                  <img class="thumb" src="{{ item.offer.image.url }}" alt="{{ item.offer.title }}">
+                {% else %}
+                  <div class="thumb"></div>
+                {% endif %}
+              </div>
+
+              <div class="item-body">
+                <p class="item-title">{{ item.offer.title }}</p>
+                <div class="item-region">{{ item.offer.region }}</div>
+
+                <div class="item-metrics">
+                  <div class="metric">Uczestnicy: <strong>{{ item.people }}</strong></div>
+                  <div class="metric">Cena / os: <strong>{{ item.price_per_person }} zł</strong></div>
+                </div>
+              </div>
+
+              <div class="item-actions">
+                <div class="price">{{ item.line_total }} zł</div>
+
+                <form method="post" action="{% url 'shop:remove_from_cart' item.offer.id %}">
+                  {% csrf_token %}
+                  <button class="btn-outline-soft" type="submit">Usuń</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <aside class="panel summary-panel">
+        <div class="summary-title">Podsumowanie</div>
+
+        <div class="summary-line">
+          <span class="muted">Liczba pozycji</span>
+          <span>{{ items|length }}</span>
+        </div>
+
+        <div class="summary-line">
+          <span class="muted">Suma</span>
+          <span class="summary-total">{{ total }} zł</span>
+        </div>
+
+        <div class="summary-actions">
+          <a class="btn-primary-cart" href="{% url 'shop:checkout_start' %}">Kup teraz</a>
+
+          <form method="post" action="{% url 'shop:clear_cart' %}" class="m-0">
+            {% csrf_token %}
+            <button class="btn-outline-soft w-100" type="submit">Wyczyść koszyk</button>
+          </form>
+
+          <a class="btn-outline-soft text-center" href="{% url 'offers:list' %}#search-bar">Wróć do wyszukiwania</a>
+        </div>
+      </aside>
+
+    </div>
+
+  {% else %}
+    <div class="empty-card">
+      <h2 style="font-size:22px; font-weight:500; margin:0 0 8px 0;">Koszyk jest pusty</h2>
+      <p class="muted" style="margin:0 0 18px 0;">
+        Dodaj ofertę do koszyka aby ją kupić.
+      </p>
+      <a class="btn-primary-cart" href="{% url 'offers:list' %}#search-bar">Przeglądaj oferty</a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

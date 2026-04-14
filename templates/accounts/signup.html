@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Rejestracja{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --border: rgba(0,0,0,.12);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --muted:#6b6b6b;
+  }
+
+  .auth-wrap{ max-width: 960px; margin: 0 auto; padding: 26px 16px 46px; }
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .title{ font-size: 28px; font-weight: 600; margin: 0 0 6px; }
+  .muted{ color: var(--muted); margin: 0 0 14px; }
+
+  .field{ margin-top: 14px; }
+  .field label{ font-size: 13px; color:#222; margin-bottom: 6px; display:block; }
+
+  .actions{ display:flex; justify-content:flex-end; margin-top: 16px; }
+</style>
+
+<div class="auth-wrap">
+  <div class="panel">
+    <h2 class="title">Utwórz konto</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <div class="field">
+        <label>Username</label>
+        {{ form.username }}
+        {% for e in form.username.errors %}<div class="text-danger mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="field">
+        <label>E-mail</label>
+        {{ form.email }}
+        {% for e in form.email.errors %}<div class="text-danger mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="field">
+        <label>Hasło</label>
+        {{ form.password1 }}
+        {% for e in form.password1.errors %}<div class="text-danger mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="field">
+        <label>Powtórz hasło</label>
+        {{ form.password2 }}
+        {% for e in form.password2.errors %}<div class="text-danger mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger mt-3">
+          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="actions">
+        <button class="btn-primary-soft" type="submit">Utwórz konto</button>
+      </div>
+    </form>
+
+    <p class="mt-3 mb-0 text-muted">
+      Masz już konto?
+      <a href="{% url 'accounts:login' %}?next={{ next|urlencode }}" style="color: var(--primary);">
+        Zaloguj się
+      </a>
+    </p>
+  </div>
+</div>
+{% endblock %}

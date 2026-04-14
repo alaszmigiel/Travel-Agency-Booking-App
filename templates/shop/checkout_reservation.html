@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Dane rezerwacji{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --panel: #F5F5F5;
+    --primary: #003E56;
+    --border: rgba(0,0,0,.12);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --muted: #6b6b6b;
+  }
+
+  .checkout-wrap{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 18px 16px 40px 16px;
+  }
+
+  .checkout-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 12px 0 18px 0;
+  }
+
+  .checkout-title{
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .checkout-step{
+    color: var(--muted);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .checkout-grid{
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap: 18px;
+  }
+
+  @media (max-width: 992px){
+    .checkout-grid{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .panel-inner{ padding: 18px; }
+
+  .form-title{
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 14px 0;
+  }
+
+  .field-label{
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #222;
+  }
+
+  .help-muted{
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+
+  .form-control{
+    border-radius: 14px;
+    border-color: rgba(0,0,0,.14);
+    padding: 12px 14px;
+  }
+
+  .form-control:focus{
+    border-color: rgba(0,62,86,.45);
+    box-shadow: 0 0 0 .2rem rgba(0,62,86,.10);
+  }
+
+  .error-text{
+    margin-top: 6px;
+    color: #b42318;
+    font-size: 13px;
+  }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    margin-top: 6px;
+  }
+
+  .btn-outline-soft-like{
+    background: transparent;
+    border: 1px solid rgba(0,0,0,.3);
+    color: #1c1c1c;
+    border-radius: 16px;
+    padding: 10px 16px;
+    font-weight: 400;
+    line-height: 1;
+    text-decoration: none !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .btn-outline-soft-like:hover{
+    border-color: rgba(0,62,86,.45);
+    color: var(--primary);
+    background: rgba(255,255,255,.25);
+  }
+
+  .btn-primary-like{
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: #fff;
+    border-radius: 16px;
+    padding: 10px 16px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .btn-primary-like:hover{ filter: brightness(.95); }
+</style>
+
+<div class="container checkout-wrap mt-4">
+  <div class="row g-4 align-items-start">
+
+    <div class="col-12 col-lg-7">
+      <div class="panel">
+        <div class="panel-inner">
+
+          <div class="checkout-head mb-3">
+            <h2 class="checkout-title">Dane rezerwacji</h2>
+            <div class="checkout-step">
+              Oferta {{ step|add:1 }} z {{ total_steps }}
+            </div>
+          </div>
+
+          <div class="form-title">Dane kontaktowe</div>
+
+          <form method="post" class="row g-3">
+            {% csrf_token %}
+
+            <div class="col-12">
+              <label class="field-label">Imię i nazwisko</label>
+              <input class="form-control" name="full_name"
+                     value="{{ existing.full_name|default:initial.full_name }}">
+              {% if errors.full_name %}<div class="error-text">{{ errors.full_name }}</div>{% endif %}
+            </div>
+
+            <div class="col-12">
+              <label class="field-label">E-mail</label>
+              <input class="form-control" name="email"
+                     value="{{ existing.email|default:initial.email }}">
+              {% if errors.email %}<div class="error-text">{{ errors.email }}</div>{% endif %}
+            </div>
+
+            <div class="col-12">
+              <label class="field-label">Telefon</label>
+              <input class="form-control" name="phone"
+                     value="{{ existing.phone|default:initial.phone }}">
+              {% if errors.phone %}<div class="error-text">{{ errors.phone }}</div>{% endif %}
+              <div class="help-muted">Użyjemy go tylko, jeśli będzie potrzeba kontaktu w sprawie rezerwacji.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="field-label">Uwagi (opcjonalnie)</label>
+              <textarea class="form-control" name="notes" rows="4">{{ existing.notes|default:initial.notes }}</textarea>
+            </div>
+
+            <div class="col-12">
+              <div class="actions">
+                {% if step > 0 %}
+                  <a class="btn-outline-soft-like" href="{% url 'shop:checkout_reservation' step=step|add:-1 %}">Wróć</a>
+                {% else %}
+                  <a class="btn-outline-soft-like" href="{% url 'shop:checkout_personalization' step=total_steps|add:-1 %}">Wróć</a>
+                {% endif %}
+
+                <button class="btn-primary-like" type="submit">Dalej</button>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      {% include "shop/offer_side_panel.html" with offer=offer kicker="Dane rezerwacji dla oferty" total_price=total_price participants=offer.available_seats %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

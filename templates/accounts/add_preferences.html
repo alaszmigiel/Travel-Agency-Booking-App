@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Preferencje{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --border: rgba(0,0,0,.12);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --muted:#6b6b6b;
+  }
+
+  .wrap{ max-width: 860px; margin: 0 auto; padding: 26px 16px 46px; }
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .title{ font-size: 28px; font-weight: 600; margin: 0 0 6px; }
+  .muted{ color: var(--muted); margin: 0 0 14px; }
+
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+
+  .btn-disabled{
+    background: rgba(0,0,0,.10);
+    border: 1px solid rgba(0,0,0,.12);
+    color: rgba(0,0,0,.45);
+    border-radius: 16px;
+    padding: 11px 18px;
+    cursor: not-allowed;
+  }
+</style>
+
+<div class="wrap">
+  <div class="panel">
+    <h2 class="title">Preferencje podróży</h2>
+
+    <p class="muted">
+      Możesz uzupełnić krótką ankietę preferencji.
+      Dzięki temu w przyszłości łatwiej dopasujemy oferty.
+    </p>
+
+    <p>Czy chcesz uzupełnić preferencje teraz?</p>
+
+    <form method="post" class="actions">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <button type="button" class="btn-disabled" disabled>
+        Przejdź do ankiety
+      </button>
+
+      <button class="btn-outline-soft" type="submit">
+        Pomiń
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ offer.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+  :root{
+    --bg: #EEE9E0;
+    --primary: #003E56;
+    --panel: #F5F5F5;
+    --text: #111;
+    --muted: #6b6b6b;
+    --border: rgba(0,0,0,.10);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --radius: 20px;
+  }
+
+  .detail-shell{
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 10px 0 40px 0;
+  }
+
+  .detail-grid{
+    display: grid;
+    grid-template-columns: 1.55fr .85fr;
+    gap: 18px;
+  }
+
+  @media (max-width: 992px){
+    .detail-grid{ grid-template-columns: 1fr; }
+  }
+
+  .media-card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .hero-media{
+    position: relative;
+    width: 100%;
+    height: clamp(320px, 48vw, 560px);
+    background: #ddd;
+  }
+
+  .hero-media img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .badge-soft{
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(245,245,245,.92);
+    border: 1px solid rgba(0,0,0,.12);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #222;
+    backdrop-filter: blur(8px);
+  }
+
+  .media-body{
+    padding: 16px 18px 18px 18px;
+  }
+
+  .title{
+    font-size: clamp(22px, 2.4vw, 34px);
+    line-height: 1.1;
+    margin: 0 0 8px 0;
+    font-weight: 650;
+    color: var(--text);
+  }
+
+  .subline{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .pill{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(0,0,0,.10);
+    padding: 8px 12px;
+    border-radius: 999px;
+    color: #222;
+  }
+
+  .desc{
+    color: #222;
+    margin: 12px 0 0 0;
+    line-height: 1.55;
+  }
+
+  .side-card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    position: sticky;
+    top: 18px;
+    height: fit-content;
+  }
+
+  @media (max-width: 992px){
+    .side-card{ position: static; }
+  }
+
+  .side-header{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .side-title{
+    font-weight: 650;
+    margin: 0;
+    font-size: 14px;
+    letter-spacing: .2px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,.70);
+  }
+
+  .price-box{
+    border-radius: 16px;
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(0,0,0,.10);
+    padding: 14px;
+    margin: 10px 0 14px 0;
+  }
+
+  .price-row{
+    display:flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    color: #222;
+    margin-bottom: 8px;
+  }
+
+  .price-big{
+    font-size: 36px;
+    font-weight: 650;
+    color: var(--primary);
+    line-height: 1;
+  }
+
+  .price-small{
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .btn-primary{
+    background: var(--primary);
+    border-color: var(--primary);
+    font-weight: 400;
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+
+  .btn-primary:hover{
+    background: var(--primary);
+    border-color: var(--primary);
+    filter: brightness(.95);
+  }
+
+  .kv{
+    border-top: 1px solid rgba(0,0,0,.08);
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+
+  .kv-item{
+    display:flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(0,0,0,.10);
+    font-size: 14px;
+  }
+
+  .kv-item:last-child{ border-bottom: none; }
+
+  .kv-key{ color: var(--muted); }
+  .kv-val{ color: #222; text-align:right; }
+
+  .section-mini{
+    margin-top: 14px;
+    padding: 12px 12px 10px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(0,0,0,.10);
+  }
+
+  .section-mini h6{
+    margin: 0 0 8px 0;
+    font-weight: 650;
+    font-size: 14px;
+    color: #222;
+  }
+
+  .mini-muted{ color: var(--muted); font-size: 13px; }
+
+  .amenities{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .amenities li{
+    font-size: 13px;
+    color: #222;
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(0,0,0,.10);
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+
+  .flight-row{
+    margin: 0 0 10px 0;
+  }
+</style>
+
+<div class="detail-shell">
+
+  <div class="detail-grid">
+
+    <div class="media-card">
+      <div class="hero-media">
+        {% if offer.image %}
+          <img src="{{ offer.image.url }}" alt="{{ offer.title }}">
+        {% else %}
+          <img src="{% static 'img/hero-water.jpg' %}" alt="Offer">
+        {% endif %}
+
+        {% if offer.promoted %}
+          <div class="badge-soft">Top oferta</div>
+        {% endif %}
+      </div>
+
+      <div class="media-body">
+        <h1 class="title">{{ offer.title }}</h1>
+
+        <div class="subline">
+          <span class="pill"><strong>Region:</strong>&nbsp;{{ offer.region|default:"—" }}</span>
+          <span class="pill"><strong>Termin:</strong>&nbsp;{{ offer.start_date }} – {{ offer.end_date }}</span>
+          <span class="pill"><strong>Uczestnicy:</strong>&nbsp;{{ offer.available_seats }}</span>
+        </div>
+
+        <p class="desc">{{ offer.description }}</p>
+      </div>
+    </div>
+
+    <aside class="side-card">
+
+      <div class="side-header">
+        <p class="side-title mb-0">Wybrana oferta</p>
+      </div>
+
+      <div class="price-box">
+        <div class="price-row">
+          <div class="price-small">Cena za osobę</div>
+          <div class="price-big">{{ offer.base_price }} zł</div>
+        </div>
+
+        <div class="price-row" style="margin-bottom:0;">
+          <div class="price-small">Cena łączna ({{ offer.available_seats }} os.)</div>
+          <div style="font-size:20px; font-weight:650; color:#222;">
+            {{ total_price }} zł
+          </div>
+       </div>
+     </div>
+
+      <form method="post" action="{% url 'shop:add_to_cart' offer.id %}" class="d-grid gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="btn btn-primary">Dodaj do koszyka</button>
+        {% if back_url %}
+          <a class="btn-outline-soft" href="{{ back_url }}">
+            Wróć do wyszukiwania
+          </a>
+        {% endif %}
+
+      </form>
+
+     <div class="kv">
+        <div class="kv-item">
+          <div class="kv-key">Termin</div>
+          <div class="kv-val">{{ offer.start_date }} – {{ offer.end_date }}</div>
+        </div>
+        <div class="kv-item">
+          <div class="kv-key">Liczba osób</div>
+          <div class="kv-val">{{ offer.available_seats }}</div>
+        </div>
+      </div>
+
+      <div class="section-mini">
+        <h6>Zakwaterowanie</h6>
+
+        {% if offer.hotel %}
+          <div class="mini-muted">
+            <strong>Hotel:</strong> {{ offer.hotel.name }}
+            {% if offer.hotel.standard %} ({{ offer.hotel.standard }}★){% endif %}
+            {% if offer.hotel.location %}<br>{{ offer.hotel.location }}{% endif %}
+          </div>
+        {% else %}
+          <div class="mini-muted text-warning">Brak przypisanego hotelu.</div>
+        {% endif %}
+
+        {% if offer.meal_plan %}
+          <div class="mini-muted mt-2">
+            <strong>Wyżywienie:</strong> {{ offer.get_meal_plan_display }}
+          </div>
+        {% else %}
+          <div class="mini-muted mt-2 text-warning">Brak przypisanego wyżywienia.</div>
+        {% endif %}
+
+        {% if offer.room %}
+          <div class="mini-muted mt-2">
+            <strong>Pokój:</strong> {{ offer.room.name }}<br>
+            Maks. {{ offer.room.max_occupancy }} os.
+            {% if offer.room.size_m2 %} · {{ offer.room.size_m2 }} m²{% endif %}
+            {% if offer.room.view_type %} · Widok: {{ offer.room.view_type }}{% endif %}
+          </div>
+
+          <ul class="amenities">
+            {% if offer.room.has_wifi %}<li>Wi-Fi</li>{% endif %}
+            {% if offer.room.has_air_conditioning %}<li>Klimatyzacja</li>{% endif %}
+            {% if offer.room.has_balcony %}<li>Balkon</li>{% endif %}
+            {% if offer.room.has_kitchen %}<li>Aneks</li>{% endif %}
+            {% if offer.room.beds_description %}<li>{{ offer.room.beds_description }}</li>{% endif %}
+          </ul>
+        {% else %}
+          <div class="mini-muted mt-2 text-warning">Brak przypisanego pokoju bazowego.</div>
+        {% endif %}
+      </div>
+
+      <div class="section-mini">
+        <h6>Loty</h6>
+
+        {% if offer.outbound_flight %}
+          <div class="flight-row mini-muted">
+            <strong>Wylot:</strong>
+            {{ offer.outbound_flight.departure_airport }} → {{ offer.outbound_flight.arrival_airport }}
+            <br>
+            {{ offer.outbound_flight.departure_time }}
+            <br>
+            <span class="mini-muted">{{ offer.outbound_flight.carrier }} · {{ offer.outbound_flight.flight_number }}</span>
+          </div>
+        {% endif %}
+
+        {% if offer.return_flight %}
+          <div class="flight-row mini-muted">
+            <strong>Powrót:</strong>
+            {{ offer.return_flight.departure_airport }} → {{ offer.return_flight.arrival_airport }}
+            <br>
+            {{ offer.return_flight.departure_time }}
+            <br>
+            <span class="mini-muted">{{ offer.return_flight.carrier }} · {{ offer.return_flight.flight_number }}</span>
+          </div>
+        {% endif %}
+
+        {% if not offer.outbound_flight and not offer.return_flight %}
+          <div class="mini-muted text-warning">Brak przypisanych lotów.</div>
+        {% endif %}
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+{% if show_cart_popup %}
+<div class="modal fade" id="addedModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Dodano do koszyka</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        Czy chcesz przejść do koszyka?
+      </div>
+
+      <div class="modal-footer justify-content-center gap-3">
+        <button
+          type="button"
+          class="btn-outline-soft"
+          data-bs-dismiss="modal">
+          Kontynuuj przeglądanie
+        </button>
+
+        <a
+          href="{% url 'shop:cart_detail' %}"
+          class="btn-primary-soft">
+          Przejdź do koszyka
+        </a>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = new bootstrap.Modal(document.getElementById("addedModal"));
+    modal.show();
+  });
+</script>
+{% endif %}
+
+{% endblock %}

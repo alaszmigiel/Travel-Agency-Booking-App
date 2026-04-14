@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Podsumowanie rezerwacji{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --muted:#6b6b6b;
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --border: rgba(0,0,0,.12);
+  }
+
+  .wrap{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 18px 16px 40px;
+  }
+
+  .title{
+    font-size: 28px;
+    font-weight: 600;
+    margin: 12px 0 18px 0;
+  }
+
+  .cardx{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .top{
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px){
+    .top{ grid-template-columns: 1fr; }
+  }
+
+  .imgwrap{
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.10);
+  }
+
+  .imgwrap img{
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hname{
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 2px 0;
+    color: #111;
+  }
+
+  .region{
+    color: var(--muted);
+    margin: 0 0 10px 0;
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 18px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 768px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .rowx{
+    display:flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(0,0,0,.08);
+  }
+  .rowx:first-child{ border-top: none; padding-top: 0; }
+
+  .label{ color: var(--muted); }
+  .val{ font-weight: 600; color:#111; text-align: right; }
+
+  .section{
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0,0,0,.10);
+  }
+
+  .stitle{
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+  }
+
+  .p-item{
+    padding: 10px 0;
+    border-top: 1px solid rgba(0,0,0,.08);
+    font-size: 14px;
+  }
+  .p-item:first-child{ border-top: none; padding-top: 0; }
+  .p-muted{ color: var(--muted); font-size: 13px; }
+
+  .totalbar{
+    margin-top: 18px;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.10);
+    border-radius: 18px;
+  }
+
+  .totalbar .tlabel{ color: var(--muted); }
+  .totalbar .tvalue{
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .actions{
+    margin-top: 14px;
+    display:flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-outline-soft-like{
+    background: transparent;
+    border: 1px solid rgba(0,0,0,.3);
+    color: #1c1c1c;
+    border-radius: 16px;
+    padding: 12px 22px;
+    text-decoration: none;
+  }
+
+  .btn-outline-soft-like:hover{
+    border-color: rgba(0,62,86,.45);
+    color: var(--primary);
+    background: rgba(255,255,255,.25);
+  }
+
+  .btn-primary-like{
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: #fff;
+    border-radius: 16px;
+    padding: 12px 22px;
+    font-weight: 500;
+  }
+  .btn-primary-like:hover{ filter: brightness(.95); }
+
+  .pos-title{
+    font-weight: 600;
+    color:#111;
+    margin: 0 0 10px 0;
+  }
+</style>
+
+<div class="wrap">
+  <h2 class="title">Podsumowanie rezerwacji</h2>
+
+  {% for item in items %}
+    {% with offer=item.offer rd=item.rd plist=item.participants people=item.people %}
+      <div class="cardx">
+
+        {% if items|length > 1 %}
+          <div class="pos-title">Pozycja {{ forloop.counter }}</div>
+        {% endif %}
+
+        <div class="top">
+          <div class="imgwrap">
+            {% if offer.image %}
+              <img src="{{ offer.image.url }}" alt="{{ offer.title }}">
+            {% else %}
+              <img src="{% static 'img/hero-water.jpg' %}" alt="Oferta">
+            {% endif %}
+          </div>
+
+          <div>
+            <div class="hname">{{ offer.title }}</div>
+            <p class="region">{{ offer.region }}</p>
+
+            <div class="grid">
+
+              <div>
+                <div class="rowx">
+                  <span class="label">Termin</span>
+                  <span class="val">{{ offer.start_date }} – {{ offer.end_date }}</span>
+                </div>
+
+                <div class="rowx">
+                  <span class="label">Uczestnicy</span>
+                  <span class="val">{{ people }}</span>
+                </div>
+
+                <div class="rowx">
+                  <span class="label">Cena / os</span>
+                  <span class="val">{{ offer.base_price }} zł</span>
+                </div>
+
+                <div class="rowx">
+                  <span class="label">Razem</span>
+                  <span class="val">{{ item.line_total }} zł</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="rowx">
+                  <span class="label">Hotel</span>
+                  <span class="val">
+                    {% if offer.hotel %}
+                      {{ offer.hotel.name }}{% if offer.hotel.standard %} ({{ offer.hotel.standard }}★){% endif %}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </span>
+                </div>
+
+                <div class="rowx">
+                  <span class="label">Pokój</span>
+                  <span class="val">
+                    {% if offer.room %}
+                      {{ offer.room.name }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </span>
+                </div>
+
+                <div class="rowx">
+                  <span class="label">Wyżywienie</span>
+                  <span class="val">
+                    {% if offer.meal_plan %}
+                      {{ offer.get_meal_plan_display }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </span>
+                </div>
+
+                <div class="rowx">
+                  <span class="label">Loty</span>
+                  <span class="val">
+                    {% if offer.outbound_flight or offer.return_flight %}
+                      ✓
+                    {% else %}
+                      —
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            {% if offer.outbound_flight or offer.return_flight %}
+              <div class="section">
+                <div class="stitle">Loty</div>
+
+                {% if offer.outbound_flight %}
+                  <div class="p-item">
+                    <strong>Wylot:</strong>
+                    {{ offer.outbound_flight.departure_airport }} → {{ offer.outbound_flight.arrival_airport }}
+                    <div class="p-muted">
+                      {{ offer.outbound_flight.departure_time }} · {{ offer.outbound_flight.carrier }} · {{ offer.outbound_flight.flight_number }}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if offer.return_flight %}
+                  <div class="p-item">
+                    <strong>Powrót:</strong>
+                    {{ offer.return_flight.departure_airport }} → {{ offer.return_flight.arrival_airport }}
+                    <div class="p-muted">
+                      {{ offer.return_flight.departure_time }} · {{ offer.return_flight.carrier }} · {{ offer.return_flight.flight_number }}
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="stitle">Dane rezerwacji</div>
+          {% if rd %}
+            <div class="p-item">
+              <strong>{{ rd.full_name }}</strong><br>
+              <span class="p-muted">{{ rd.email }} · {{ rd.phone }}</span>
+              {% if rd.notes %}
+                <div class="p-muted mt-1">Uwagi: {{ rd.notes }}</div>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="text-danger">Brak danych rezerwacji!</div>
+          {% endif %}
+        </div>
+
+        <div class="section">
+          <div class="stitle">Uczestnicy</div>
+
+          {% if plist and plist|length %}
+            {% for p in plist %}
+              <div class="p-item">
+                <strong>{{ forloop.counter }}. {{ p.first_name }} {{ p.last_name }}</strong><br>
+                <span class="p-muted">
+                  ur. {{ p.birth_date }} ·
+                  {% if p.document_type == "passport" %}Paszport{% else %}Dowód{% endif %}
+                  {{ p.document_number }}
+                </span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="p-muted">Brak danych uczestników.</div>
+          {% endif %}
+        </div>
+
+      </div>
+    {% endwith %}
+  {% endfor %}
+
+  <div class="totalbar">
+    <div class="tlabel">Suma do zapłaty</div>
+    <div class="tvalue">{{ total }} zł</div>
+  </div>
+
+  <div class="actions">
+    <a class="btn-outline-soft-like" href="{% url 'shop:checkout_participants' step=0 %}">Wróć</a>
+
+    <form method="post" action="{% url 'shop:checkout_pay' %}">
+      {% csrf_token %}
+      <button class="btn-primary-like" type="submit">Przejdź do płatności</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

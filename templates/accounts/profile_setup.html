@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Uzupełnij dane{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --border: rgba(0,0,0,.12);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --muted:#6b6b6b;
+  }
+
+  .auth-wrap{ max-width: 960px; margin: 0 auto; padding: 28px 16px 46px; }
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .title{ font-size: 28px; font-weight: 600; margin: 0 0 6px; }
+  .muted{ color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+
+  .field{ margin-top: 14px; }
+  .field label{ font-size: 13px; color:#222; margin-bottom: 6px; display:block; }
+
+  .panel input, .panel textarea{
+    width:100%;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,.14);
+    padding:12px 14px;
+  }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+</style>
+
+<div class="auth-wrap">
+  <div class="panel">
+    <h2 class="title">Uzupełnij podstawowe dane</h2>
+    <p class="muted">Te informacje ułatwią rezerwacje i kontakt.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <div class="field">
+        <label>Imię</label>
+        {{ form.first_name }}
+      </div>
+
+      <div class="field">
+        <label>Nazwisko</label>
+        {{ form.last_name }}
+      </div>
+
+      <div class="field">
+        <label>Telefon</label>
+        {{ form.phone }}
+      </div>
+
+      <div class="field">
+        <label>Adres</label>
+        {{ form.address }}
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary-soft" type="submit">Zapisz dane</button>
+        <button class="btn-outline-soft" type="submit" name="skip" value="1">
+          Uzupełnij później
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

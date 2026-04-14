@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Logowanie{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --border: rgba(0,0,0,.12);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --muted:#6b6b6b;
+  }
+
+  .auth-wrap{ max-width: 960px; margin: 0 auto; padding: 28px 16px 46px; }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .title{ font-size: 28px; font-weight: 600; margin: 0 0 6px; }
+  .muted{ color: var(--muted); margin: 0 0 18px; }
+
+  .field{ margin-top: 14px; }
+  .field label{
+    font-size: 13px;
+    color:#222;
+    margin-bottom: 6px;
+    display:block;
+  }
+
+  .panel input[type="text"],
+  .panel input[type="password"],
+  .panel input[type="email"],
+  .panel input[type="number"]{
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,.14);
+    padding: 12px 14px;
+    background: #fff;
+    outline: none;
+  }
+
+  .panel input:focus{
+    border-color: rgba(0,62,86,.45);
+    box-shadow: 0 0 0 .2rem rgba(0,62,86,.10);
+  }
+
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-top: 18px;
+  }
+
+  .bottom{
+    margin-top: 14px;
+    color: var(--muted);
+  }
+  .bottom a{ color: var(--primary); }
+</style>
+
+<div class="auth-wrap">
+  <div class="panel">
+    <h2 class="title">Zaloguj się</h2>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-3">
+          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+        {% for e in form.username.errors %}<div class="text-danger mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password.id_for_label }}">Hasło</label>
+        {{ form.password }}
+        {% for e in form.password.errors %}<div class="text-danger mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary-soft" type="submit">Zaloguj</button>
+      </div>
+    </form>
+
+    <div class="bottom">
+      Nie masz konta? <a href="{% url 'accounts:signup' %}?next={{ request.GET.next|urlencode }}"> Zarejestruj się </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

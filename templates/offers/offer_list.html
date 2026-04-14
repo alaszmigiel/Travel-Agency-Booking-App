@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Oferty{% endblock %}
+{% block content %}
+
+<style>
+  :root{
+    --bg: #EEE9E0;
+    --primary: #003E56;
+    --text: #111;
+    --muted: #6b6b6b;
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --panel: #F5F5F5;
+  }
+
+  .hero-wrap{ width: 100%; position: relative; }
+  .hero-image{
+    width: 100%;
+    height: 460px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.05);
+  }
+
+  .hero-image:after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(90deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.16) 45%, rgba(0,0,0,0) 70%);
+  }
+
+  .hero-inner{
+    position: absolute;
+    left: 0; right: 0;
+    top: 0;
+    height: 460px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-text{
+    color: #F5F5F5;
+    max-width: 760px;
+    padding: 0 12px;
+  }
+
+  .hero-kicker{
+    font-weight: 600;
+    letter-spacing: 2px;
+    opacity: .95;
+    margin-bottom: 6px;
+    color: #F5F5F5;
+  }
+
+  .hero-title{
+    font-weight: 700;
+    font-size: clamp(36px, 4.2vw, 58px);
+    line-height: 1.03;
+    margin: 0 0 10px 0;
+    color: #F5F5F5;
+  }
+
+  .hero-subtitle{
+    margin: 0;
+    opacity: .92;
+    font-size: 16px;
+    max-width: 580px;
+    color: #F5F5F5;
+  }
+
+  .anchor{ scroll-margin-top: 110px; }
+
+  .floating-search{
+    position: relative;
+    margin-top: -62px;
+    padding: 0 16px;
+  }
+
+  .search-card{
+    background: var(--panel);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 26px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    max-width: 1480px;
+    margin: 0 auto;
+  }
+
+  .search-label{
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #222;
+  }
+
+  .btn-primary{
+    background: var(--primary);
+    border-color: var(--primary);
+    font-weight: 400;
+  }
+
+  .btn-primary:hover{
+    background: var(--primary);
+    border-color: var(--primary);
+    filter: brightness(.95);
+  }
+
+  .chip{
+    border: 1px solid rgba(0,0,0,.12);
+    background: rgba(255,255,255,.55);
+    border-radius: 999px;
+    padding: 10px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+    color: #222;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .chip:hover{
+    border-color: rgba(0,62,86,.35);
+    box-shadow: 0 10px 26px rgba(0,62,86,.10);
+    color: var(--primary);
+  }
+
+  .section-shell{
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 16px 46px 16px;
+  }
+
+  .section-title{
+    font-weight: 650;
+    font-size: 26px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+  }
+
+  .offer-card{
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 14px 34px rgba(0,0,0,.08);
+    height: 100%;
+  }
+
+  .offer-thumb{
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .offer-body{ padding: 14px 14px 12px 14px; }
+
+  .offer-title{
+    font-weight: 650;
+    margin-bottom: 6px;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .offer-meta{
+    color: #666;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+
+  .offer-price{
+    font-weight: 650;
+    color: var(--primary);
+  }
+
+  .muted{ color: var(--muted); }
+
+  .filters-card{
+    background: var(--panel);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.06);
+  }
+</style>
+
+<div class="hero-wrap">
+  <div class="hero-image">
+    <img src="{% static 'img/hero-water.jpg' %}" alt="Travel hero">
+  </div>
+
+  <div class="hero-inner">
+    <div class="container">
+      <div class="hero-text">
+        <div class="hero-kicker">Travel Agency</div>
+        <h1 class="hero-title">Odkrywaj świat<br>po swojemu</h1>
+        <p class="hero-subtitle">
+          Każda wycieczka projektowana dokładnie tak, jak chcesz.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="search-bar" class="anchor"></div>
+
+<div class="floating-search">
+  <div class="search-card">
+    <form method="get" class="row g-3 align-items-end">
+
+      <div class="col-12 col-lg-5">
+        <div class="search-label">Szukaj</div>
+        <input class="form-control" type="text" name="query"
+               placeholder="Kierunek / słowa kluczowe..."
+               value="{{ query }}">
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="search-label">Region</div>
+        <select class="form-select" name="region">
+          <option value="">Wszystkie</option>
+          {% for r in regions %}
+            <option value="{{ r }}" {% if r == region %}
+                    selected{% endif %}>{{ r }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-2">
+        <div class="search-label">Osoby</div>
+        <input class="form-control" type="number" min="1" name="people"
+               placeholder="np. 2"
+               value="{{ people }}">
+      </div>
+
+      <div class="col-12 col-lg-2 d-grid">
+        <button class="btn btn-primary"
+                type="submit">Szukaj</button>
+      </div>
+
+      <div class="col-12 col-lg-7">
+        <div class="search-label">Sortowanie</div>
+        <select class="form-select" name="sort" onchange="this.form.submit()">
+          <option value="">Domyślne</option>
+          <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>Cena rosnąco</option>
+          <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Cena malejąco</option>
+          <option value="date_asc" {% if sort == "date_asc" %}selected{% endif %}>Data od najbliższej</option>
+          <option value="date_desc" {% if sort == "date_desc" %}selected{% endif %}>Data od najdalszej</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-lg-5 d-flex flex-wrap gap-2 justify-content-lg-end">
+        <a class="chip" href="{% url 'offers:list' %}?tag=narty#search-bar">Narty</a>
+        <a class="chip" href="{% url 'offers:list' %}?tag=allinclusive#search-bar">All inclusive</a>
+        <a class="chip" href="{% url 'offers:list' %}?tag=citybreak#search-bar">City break</a>
+        <a class="chip" href="{% url 'offers:list' %}?tag=zdziecmi#search-bar">Z dziećmi</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<div class="section-shell">
+
+  {% if not show_results %}
+    <div id="top-offers" class="anchor"></div>
+
+    <div class="d-flex align-items-center justify-content-between">
+      <h2 class="section-title mb-0">Top oferty</h2>
+    </div>
+
+    <div class="row g-3 mt-2">
+      {% for offer in top_offers %}
+          <div class="col-12 col-md-6 col-xl-4">
+              <div class="offer-card">
+                  {% if offer.image %}
+                      <img src="{{ offer.image.url }}" class="offer-thumb" alt="{{ offer.title }}">
+                  {% endif %}
+                  <div class="offer-body">
+                      <div class="offer-title">
+                          <a class="text-decoration-none text-dark" href="{% url 'offers:detail' offer.id %}">
+                              {{ offer.title }}
+                          </a>
+                      </div>
+                      <div class="offer-meta">{{ offer.region }}</div>
+                      <div class="d-flex justify-content-between align-items-center">
+                          <div class="offer-price">{{ offer.base_price }} zł/os</div>
+                          <div class="muted">Uczestnicy: {{ offer.available_seats }}</div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      {% empty %}
+          <div class="col-12">
+              <p class="muted">Brak promowanych ofert.</p>
+          </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="row g-3 mt-3">
+
+      <div class="col-12 col-lg-3">
+        <div class="filters-card">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0" style="font-weight:650;">Filtry</h5>
+            <a class="text-decoration-none" style="color: var(--primary);" href="{% url 'offers:list' %}">
+              Wyczyść
+            </a>
+          </div>
+
+          <form method="get">
+            <input type="hidden" name="tag" value="{{ tag }}">
+            <input type="hidden" name="query" value="{{ query }}">
+            <input type="hidden" name="region" value="{{ region }}">
+            <input type="hidden" name="people" value="{{ people }}">
+            <input type="hidden" name="sort" value="{{ sort }}">
+
+            <div class="accordion" id="filtersAccordion">
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#fPrice">
+                    Cena
+                  </button>
+                </h2>
+                <div id="fPrice" class="accordion-collapse collapse show" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <input class="form-control" type="number" name="price_min" placeholder="od" value="{{ price_min }}">
+                      </div>
+                      <div class="col-6">
+                        <input class="form-control" type="number" name="price_max" placeholder="do" value="{{ price_max }}">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fDates">
+                    Terminy
+                  </button>
+                </h2>
+                <div id="fDates" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <label class="form-label">Data od</label>
+                    <input class="form-control mb-2" type="date" name="date_from" value="{{ date_from }}">
+                    <label class="form-label">Data do</label>
+                    <input class="form-control" type="date" name="date_to" value="{{ date_to }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fPopular">
+                    Popularne
+                  </button>
+                </h2>
+                <div id="fPopular" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="promoted" value="1" id="promoted"
+                             {% if promoted == "1" %}checked{% endif %}>
+                      <label class="form-check-label" for="promoted">Promowane</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+            <div class="d-grid mt-3">
+              <button class="btn-outline-soft" type="submit">Zastosuj filtry</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-9">
+        <h2 class="section-title mt-0">Wyniki</h2>
+
+        <div class="row g-3">
+          {% for offer in offers %}
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="offer-card">
+                {% if offer.image %}
+                  <img src="{{ offer.image.url }}" class="offer-thumb" alt="{{ offer.title }}">
+                {% endif %}
+                <div class="offer-body">
+                  <div class="offer-title">
+                    <a class="text-decoration-none text-dark" href="{% url 'offers:detail' offer.id %}">
+                      {{ offer.title }}
+                    </a>
+                  </div>
+                  <div class="offer-meta">{{ offer.region }}</div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="offer-price">{{ offer.base_price }} zł/os</div>
+                    <div class="muted">Uczestnicy: {{ offer.available_seats }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">
+              <p class="muted">Brak wyników dla podanych kryteriów.</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

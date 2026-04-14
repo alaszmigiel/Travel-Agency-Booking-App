@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Personalizacja{% endblock %}
+
+{% block content %}
+
+<style>
+  .checkout-wrap{ max-width: 1200px; }
+
+  .choice-tile{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 18px;
+    border-radius:18px;
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+    margin-bottom: 14px;
+  }
+
+  .choice-tile:hover{
+    border-color: rgba(0,62,86,.40);
+    box-shadow: 0 10px 26px rgba(0,0,0,.08);
+  }
+
+  .choice-tile .tile-left{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    flex:1;
+  }
+
+  .choice-tile input[type="radio"]{
+    margin-top: 4px;
+    accent-color: var(--primary);
+  }
+
+  .choice-left{ flex:1; }
+  .choice-left h6{ margin:0 0 4px 0; font-weight:600; }
+  .choice-left p{ margin:0; color:#6b6b6b; }
+
+  .choice-tile.disabled{ opacity:.55; cursor:not-allowed; }
+  .choice-tile.disabled:hover{ box-shadow:none; border-color: rgba(0,0,0,.12); }
+
+</style>
+
+<div class="container checkout-wrap mt-4">
+  <div class="row g-4 align-items-start">
+
+    <div class="col-12 col-lg-7">
+      <div class="soft-card p-4">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div>
+            <h2 class="mb-2">Wybór personalizacji</h2>
+            <p class="text-muted mb-4">
+              Oferta {{ step|add:1 }} z {{ total_steps }} · wybierz sposób zakupu.
+            </p>
+          </div>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <label class="choice-tile {% if existing_choice == 'none' %}is-selected{% endif %}">
+            <div class="tile-left">
+              <input type="radio" name="personalization" value="none"
+                     {% if existing_choice == "none" %}checked{% endif %}>
+              <div class="choice-left">
+                <h6>Oferta bazowa</h6>
+                <p>Kup podstawową ofertę.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="choice-tile disabled">
+            <div class="tile-left">
+              <input type="radio" name="personalization" value="self" disabled
+                     {% if existing_choice == "self" %}checked{% endif %}>
+              <div class="choice-left">
+                <h6>Samodzielna personalizacja</h6>
+                <p>Sam zdecyduj jak ma wyglądać podróż.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="choice-tile disabled">
+            <div class="tile-left">
+              <input type="radio" name="personalization" value="advisor" disabled
+                     {% if existing_choice == "advisor" %}checked{% endif %}>
+              <div class="choice-left">
+                <h6>Personalizacja z doradcą</h6>
+                <p>Konsultant dopasuje ofertę do Twoich potrzeb.</p>
+              </div>
+            </div>
+          </label>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            {% if step > 0 %}
+              <a class="btn-outline-soft" href="{% url 'shop:checkout_personalization' step=step|add:-1 %}">Wróć</a>
+            {% else %}
+              <a class="btn-outline-soft" href="{% url 'shop:cart_detail' %}">Wróć do koszyka</a>
+            {% endif %}
+
+            <button class="btn-primary-soft" type="submit">Dalej</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      {% include "shop/offer_side_panel.html" with offer=offer kicker="Personalizujesz ofertę" total_price=total_price %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tiles = document.querySelectorAll(".choice-tile:not(.disabled)");
+    tiles.forEach(tile => {
+      tile.addEventListener("click", () => {
+        tiles.forEach(t => t.classList.remove("is-selected"));
+        tile.classList.add("is-selected");
+      });
+    });
+  });
+</script>
+
+{% endblock %}

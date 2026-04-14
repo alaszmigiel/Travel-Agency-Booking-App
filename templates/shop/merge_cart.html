@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dodać wcześniejsze oferty?{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --border: rgba(0,0,0,.12);
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --muted:#6b6b6b;
+    --radius: 22px;
+  }
+
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 22px 16px 40px;
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+
+  .title{
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color:#111;
+  }
+
+  .muted{ color: var(--muted); margin: 0; }
+
+  .list{
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .rowx{
+    background:#fff;
+    border: 1px solid rgba(0,0,0,.10);
+    border-radius: 18px;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns: 96px 1fr auto;
+    gap: 12px;
+    align-items:center;
+    padding: 10px;
+  }
+
+  @media (max-width: 720px){
+    .rowx{ grid-template-columns: 72px 1fr; }
+    .price{ grid-column: 1 / -1; justify-self: end; }
+  }
+
+  .thumb{
+    width: 96px;
+    height: 72px;
+    border-radius: 14px;
+    object-fit: cover;
+    background:#eee;
+  }
+
+  @media (max-width: 720px){
+    .thumb{ width:72px; height:56px; }
+  }
+
+  .name{
+    font-weight: 600;
+    margin:0;
+    line-height:1.2;
+    color:#111;
+  }
+
+  .meta{
+    margin:4px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .price{
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+    padding-right: 8px;
+  }
+
+  .actions{
+    display:flex;
+    gap: 10px;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    margin-top: 16px;
+  }
+
+  .btn-outline-soft-like{
+    background: transparent;
+    border: 1px solid rgba(0,0,0,.3);
+    color: #1c1c1c;
+    border-radius: 16px;
+    padding: 11px 18px;
+    font-weight: 400;
+    line-height: 1;
+    text-decoration: none !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .btn-outline-soft-like:hover{
+    border-color: rgba(0,62,86,.45);
+    color: var(--primary);
+    background: rgba(255,255,255,.25);
+  }
+
+  .btn-primary-like{
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: #fff;
+    border-radius: 16px;
+    padding: 11px 18px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .btn-primary-like:hover{ filter: brightness(.95); }
+
+  .hint{
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>
+
+<div class="wrap">
+  <div class="panel">
+    <h1 class="title">Masz zapisane wcześniejsze oferty</h1>
+    <p class="muted">
+      Wykryliśmy oferty, które były wcześniej w Twoim koszyku na koncie,
+      ale nie ma ich w aktualnym koszyku. Czy chcesz dodać je do tego zamówienia?
+    </p>
+
+    <div class="list">
+      {% for o in extra_offers %}
+        <div class="rowx">
+          <div>
+            {% if o.image %}
+              <img class="thumb" src="{{ o.image.url }}" alt="{{ o.title }}">
+            {% else %}
+              <div class="thumb"></div>
+            {% endif %}
+          </div>
+
+          <div>
+            <p class="name">{{ o.title }}</p>
+            <p class="meta">{{ o.region }} · {{ o.start_date }} – {{ o.end_date }}</p>
+          </div>
+
+          <div class="price">
+            {{ o.base_price }} zł / os
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <p class="hint">
+      Duplikaty nie są pokazane — jeśli oferta jest już w aktualnym koszyku, nie dodamy jej drugi raz.
+    </p>
+
+    <form method="post" class="actions">
+      {% csrf_token %}
+      <button name="decision" value="discard" class="btn-outline-soft-like" type="submit">
+        Nie, pomiń te oferty
+      </button>
+      <button name="decision" value="merge" class="btn-primary-like" type="submit">
+        Tak, dodaj do zamówienia
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

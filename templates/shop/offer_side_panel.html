@@ -1,0 +1,64 @@
+{% load static %}
+
+{% if offer %}
+  {% with pax=participants|default:offer.available_seats %}
+  <div class="offer-side">
+
+    {% if offer.image %}
+      <div class="offer-image-wrap">
+        <img src="{{ offer.image.url }}" alt="{{ offer.title }}">
+      </div>
+    {% endif %}
+
+    <div class="offer-panel">
+      <div class="offer-kicker">
+        {{ kicker|default:"Twoja oferta" }}
+      </div>
+
+      <div class="offer-title">{{ offer.title }}</div>
+      <div class="offer-region">{{ offer.region }}</div>
+
+      <hr>
+
+      <div class="offer-row">
+        <span class="label">Liczba uczestników</span>
+        <strong>{{ pax }}</strong>
+      </div>
+
+      <div class="offer-row">
+        <span class="label">Cena / os</span>
+        <strong>
+          {% if price_per_person is not None %}
+            {{ price_per_person }} zł
+          {% else %}
+            {{ offer.base_price }} zł
+          {% endif %}
+        </strong>
+      </div>
+
+      <div class="offer-row">
+        <span class="label">Termin</span>
+        <strong>{{ offer.start_date }} – {{ offer.end_date }}</strong>
+      </div>
+
+      <hr>
+
+      <div class="offer-total">
+        <div class="label">
+          Cena łączna
+          <small class="d-block">dla {{ pax }} os.</small>
+        </div>
+
+        <div class="value">
+          {% if total_price is not None %}
+            {{ total_price }} zł
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+  {% endwith %}
+{% endif %}

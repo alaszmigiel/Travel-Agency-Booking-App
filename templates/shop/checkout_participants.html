@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Uczestnicy{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --primary:#003E56;
+    --panel:#F5F5F5;
+    --muted:#6b6b6b;
+    --shadow: 0 18px 50px rgba(0,0,0,.10);
+    --border: rgba(0,0,0,.12);
+  }
+
+  .checkout-wrap{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 18px 16px 40px 16px;
+  }
+
+  .checkout-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 12px 0 18px 0;
+  }
+
+  .checkout-title{
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .checkout-step{
+    color: var(--muted);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .checkout-grid{
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap: 18px;
+  }
+
+  @media (max-width: 992px){
+    .checkout-grid{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .panel-inner{ padding: 18px; }
+
+  .intro{
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 14px 0;
+  }
+
+  .p-card{
+    border-radius: 18px;
+    border: 1px solid rgba(0,0,0,.10);
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+
+  .p-card-head{
+    background: var(--panel);
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    padding: 14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .p-title{
+    margin: 0;
+    font-weight: 600;
+    font-size: 14px;
+    color: #1c1c1c;
+  }
+
+  .p-body{ padding: 16px; }
+
+  .form-label{
+    font-size: 13px;
+    color: #1c1c1c;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+
+  .form-control, .form-select{
+    border-radius: 14px;
+    border-color: rgba(0,0,0,.12);
+    background-color: #fff;
+    padding: 12px 14px;
+  }
+
+  .form-control:focus, .form-select:focus{
+    border-color: rgba(0,62,86,.35);
+    box-shadow: 0 0 0 .2rem rgba(0,62,86,.15);
+  }
+
+  .invalid-feedback{
+    display:block;
+    margin-top: 6px;
+  }
+
+  .actions{
+    display:flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .btn-outline-soft-like{
+    background: transparent;
+    border: 1px solid rgba(0,0,0,.3);
+    color: #1c1c1c;
+    border-radius: 16px;
+    padding: 11px 18px;
+    font-weight: 400;
+    line-height: 1;
+    text-decoration: none !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .btn-outline-soft-like:hover{
+    border-color: rgba(0,62,86,.45);
+    color: var(--primary);
+    background: rgba(255,255,255,.25);
+  }
+
+  .btn-primary-like{
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: #fff;
+    border-radius: 16px;
+    padding: 11px 18px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .btn-primary-like:hover{ filter: brightness(.95); }
+</style>
+
+<div class="container checkout-wrap mt-4">
+  <div class="row g-4 align-items-start">
+
+    <div class="col-12 col-lg-7">
+      <div class="panel">
+        <div class="panel-inner">
+
+          <div class="checkout-head mb-3">
+            <div>
+              <h2 class="checkout-title">Dane uczestników</h2>
+              <p class="intro">Uzupełnij dane wszystkich uczestników.</p>
+            </div>
+            <div class="checkout-step">
+              Oferta {{ step|add:1 }} z {{ total_steps }}
+            </div>
+          </div>
+
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="row g-3">
+              {% for p, e in participants %}
+                {% with i=forloop.counter0 %}
+                  <div class="col-12">
+                    <div class="p-card">
+                      <div class="p-card-head">
+                        <h6 class="p-title">Uczestnik {{ forloop.counter }}</h6>
+                      </div>
+
+                      <div class="p-body">
+                        <div class="row g-3">
+
+                          <div class="col-12 col-md-6">
+                            <label class="form-label">Imię</label>
+                            <input
+                              class="form-control {% if e.first_name %}is-invalid{% endif %}"
+                              name="first_name_{{ i }}"
+                              value="{{ p.first_name }}"
+                              autocomplete="given-name">
+                            {% if e.first_name %}
+                              <div class="invalid-feedback">{{ e.first_name }}</div>
+                            {% endif %}
+                          </div>
+
+                          <div class="col-12 col-md-6">
+                            <label class="form-label">Nazwisko</label>
+                            <input
+                              class="form-control {% if e.last_name %}is-invalid{% endif %}"
+                              name="last_name_{{ i }}"
+                              value="{{ p.last_name }}"
+                              autocomplete="family-name">
+                            {% if e.last_name %}
+                              <div class="invalid-feedback">{{ e.last_name }}</div>
+                            {% endif %}
+                          </div>
+
+                          <div class="col-12 col-md-4">
+                            <label class="form-label">Data urodzenia</label>
+                            <input
+                              class="form-control {% if e.birth_date %}is-invalid{% endif %}"
+                              type="date"
+                              name="birth_date_{{ i }}"
+                              value="{{ p.birth_date }}">
+                            {% if e.birth_date %}
+                              <div class="invalid-feedback">{{ e.birth_date }}</div>
+                            {% endif %}
+                          </div>
+
+                          <div class="col-12 col-md-4">
+                            <label class="form-label">Typ dokumentu</label>
+                            <select class="form-select" name="document_type_{{ i }}">
+                              <option value="id" {% if p.document_type == "id" %}selected{% endif %}>Dowód osobisty</option>
+                              <option value="passport" {% if p.document_type == "passport" %}selected{% endif %}>Paszport</option>
+                            </select>
+                          </div>
+
+                          <div class="col-12 col-md-4">
+                            <label class="form-label">Numer dokumentu</label>
+                            <input
+                              class="form-control {% if e.document_number %}is-invalid{% endif %}"
+                              name="document_number_{{ i }}"
+                              value="{{ p.document_number }}"
+                              autocomplete="off">
+                            {% if e.document_number %}
+                              <div class="invalid-feedback">{{ e.document_number }}</div>
+                            {% endif %}
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endwith %}
+              {% endfor %}
+            </div>
+
+            <div class="actions mt-3">
+              <a class="btn-outline-soft-like" href="{% url 'shop:checkout_reservation' step=step %}">Wróć</a>
+              <button class="btn-primary-like" type="submit">Dalej</button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      {% include "shop/offer_side_panel.html" with offer=offer kicker="Dane uczestników dla oferty" total_price=total_price participants=count %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
