@@ -1,7 +1,6 @@
 @echo off
 setlocal
 
-REM Create venv if not exists
 if not exist venv (
   python -m venv venv
 )
